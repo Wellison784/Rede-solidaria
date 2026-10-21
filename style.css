@@ -770,3 +770,13 @@ footer {
   font-size: 10px;
   background: #fff;
 }
+.prize-badge {
+  margin: 12px 0 0 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-left: 3px solid #6e9c83;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
