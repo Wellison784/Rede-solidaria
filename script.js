@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURAÇÕES DA ORGANIZAÇÃO
 // ==========================================
-const ORGANIZER_WHATSAPP = "5547989037974"; 
+const ORGANIZER_WHATSAPP = "5547999052813"; 
 const PIX_KEY = "proffnilvia.rg64@gmail.com";
 const ADMIN_PASSWORD = "20012027"; 
 const TICKET_PRICE = 10; // Valor por bilhete em R$
