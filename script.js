@@ -3,17 +3,28 @@
 // ==========================================
 const ORGANIZER_WHATSAPP = "5547989037974"; 
 const PIX_KEY = "proffnilvia.rg64@gmail.com";
-const ADMIN_PASSWORD = "20012027"; 
+const ADMIN_PASSWORD = "123"; 
 
-// LISTA DE NÚMEROS VENDIDOS OFICIAIS PARA O GITHUB:
-// Adicione aqui os números já vendidos para que apareçam bloqueados para todos os visitantes
-const INITIAL_SOLD_NUMBERS = []; 
+// CONFIGURAÇÃO DO SEU FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyD5fCIlXoTwrISHaVPbsaZACIvbR_rEkvY",
+  authDomain: "rede-solidaria-35474.firebaseapp.com",
+  databaseURL: "https://rede-solidaria-35474-default-rtdb.firebaseio.com",
+  projectId: "rede-solidaria-35474",
+  storageBucket: "rede-solidaria-35474.firebasestorage.app",
+  messagingSenderId: "979924553048",
+  appId: "1:979924553048:web:3a5e6ba8b829811473292d"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const soldNumbersRef = db.ref('soldNumbers');
 
 // ==========================================
 // LÓGICA DO SISTEMA
 // ==========================================
-let savedData = localStorage.getItem('rede_solidaria_sold_numbers');
-let soldNumbers = savedData !== null ? JSON.parse(savedData) : [...INITIAL_SOLD_NUMBERS];
+let soldNumbers = [];
 let tempSoldNumbers = [];
 let selectedNumber = null;
 
@@ -46,6 +57,13 @@ function showMessage(text, isSuccess = false) {
 
 closeMessageBtn.addEventListener('click', () => {
   messageBox.style.display = 'none';
+});
+
+// ESCUTAR MUDANÇAS NO FIREBASE EM TEMPO REAL PARA TODOS OS USUÁRIOS
+soldNumbersRef.on('value', (snapshot) => {
+  const data = snapshot.val();
+  soldNumbers = data ? data : [];
+  renderPublicGrid();
 });
 
 function renderPublicGrid() {
@@ -99,11 +117,15 @@ function renderManagerGrid() {
   }
 }
 
+// Salva as alterações diretamente na nuvem do Firebase
 saveManagerBtn.addEventListener('click', () => {
-  soldNumbers = [...tempSoldNumbers];
-  localStorage.setItem('rede_solidaria_sold_numbers', JSON.stringify(soldNumbers));
-  renderPublicGrid();
-  showMessage('Alterações salvas com sucesso!', true);
+  soldNumbersRef.set(tempSoldNumbers, (error) => {
+    if (error) {
+      showMessage('Erro ao salvar no Firebase!');
+    } else {
+      showMessage('Sincronizado na nuvem com sucesso!', true);
+    }
+  });
 });
 
 whatsappForm.addEventListener('submit', (e) => {
@@ -122,7 +144,6 @@ whatsappForm.addEventListener('submit', (e) => {
     return;
   }
 
-  // Mensagem ajustada sem caracteres especiais problemáticos
   const message = `Ola! Gostaria de reservar o número para a Rifa Solidaria:\n\nNumero Escolhido: ${fmt(selectedNumber)}\nNome: ${name}\nContato: ${phone}\n\nChave Pix para pagamento: ${PIX_KEY}\nValor: R$ 10,00\n\nAguardo a confirmacao da minha reserva!`;
 
   const encodedMessage = encodeURIComponent(message);

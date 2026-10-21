@@ -125,7 +125,7 @@
             <div>
               <span class="eyebrow">CONTROLE DE VENDAS (RESTRITO)</span>
               <h2>Gerenciar Números Vendidos</h2>
-              <p class="muted">Clique nos números para alterar o status. Lembre-se de clicar em "Salvar Alterações" ao terminar.</p>
+              <p class="muted">Clique nos números para alterar o status e clique em "Salvar Alterações". Sincroniza em tempo real no Firebase.</p>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
               <button class="primary-button" id="saveManagerBtn" style="padding: 10px 16px;">💾 Salvar Alterações</button>
@@ -156,6 +156,11 @@
     </footer>
   </div>
 
+  <!-- Bibliotecas do Firebase necessárias para a sincronização -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- O seu script principal -->
   <script src="script.js"></script>
 </body>
 </html>
