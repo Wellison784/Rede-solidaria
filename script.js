@@ -1,32 +1,22 @@
 // ==========================================
 // CONFIGURAÇÕES DA ORGANIZAÇÃO
 // ==========================================
-// 1. WHATSAPP (55 + DDD + Número):
 const ORGANIZER_WHATSAPP = "5547989037974"; 
-
-// 2. CHAVE PIX:
 const PIX_KEY = "proffnilvia.rg64@gmail.com";
-
-// 3. SENHA DO PAINEL DA ORGANIZADORA:
 const ADMIN_PASSWORD = "20012027"; 
 
-// 4. NÚMEROS VENDIDOS INICIAIS (Deixe vazio [] se quiser controlar tudo pelo painel):
+// LISTA DE NÚMEROS VENDIDOS OFICIAIS PARA O GITHUB:
+// Adicione aqui os números já vendidos para que apareçam bloqueados para todos os visitantes
 const INITIAL_SOLD_NUMBERS = []; 
 
 // ==========================================
 // LÓGICA DO SISTEMA
 // ==========================================
-
-// Pega do navegador ou inicializa com a lista fixa
 let savedData = localStorage.getItem('rede_solidaria_sold_numbers');
 let soldNumbers = savedData !== null ? JSON.parse(savedData) : [...INITIAL_SOLD_NUMBERS];
-
-// Cópia temporária para edições no painel sem salvar imediatamente
 let tempSoldNumbers = [];
-
 let selectedNumber = null;
 
-// Elementos do DOM
 const numberGrid = document.getElementById('numberGrid');
 const managerNumberGrid = document.getElementById('managerNumberGrid');
 const freeCountDisplay = document.getElementById('freeCountDisplay');
@@ -58,7 +48,6 @@ closeMessageBtn.addEventListener('click', () => {
   messageBox.style.display = 'none';
 });
 
-// Renderizar Grade Pública
 function renderPublicGrid() {
   numberGrid.innerHTML = '';
   let availableCount = 0;
@@ -87,7 +76,6 @@ function renderPublicGrid() {
   freeCountDisplay.textContent = availableCount;
 }
 
-// Renderizar Grade do Painel de Gerenciamento (Trabalha na lista temporária)
 function renderManagerGrid() {
   managerNumberGrid.innerHTML = '';
 
@@ -111,7 +99,6 @@ function renderManagerGrid() {
   }
 }
 
-// Botão de Salvar Alterações
 saveManagerBtn.addEventListener('click', () => {
   soldNumbers = [...tempSoldNumbers];
   localStorage.setItem('rede_solidaria_sold_numbers', JSON.stringify(soldNumbers));
@@ -119,7 +106,6 @@ saveManagerBtn.addEventListener('click', () => {
   showMessage('Alterações salvas com sucesso!', true);
 });
 
-// Enviar para WhatsApp
 whatsappForm.addEventListener('submit', (e) => {
   e.preventDefault();
 
@@ -136,16 +122,8 @@ whatsappForm.addEventListener('submit', (e) => {
     return;
   }
 
-  const message = `Olá! Gostaria de reservar o número para a Rifa Solidária:
-
-📌 *Número Escolhido:* ${fmt(selectedNumber)}
-👤 *Nome:* ${name}
-📞 *Contato:* ${phone}
-
-💠 *Chave Pix para pagamento:* ${PIX_KEY}
-💰 *Valor:* R$ 10,00
-
-Aguardo a confirmação da minha reserva!`;
+  // Mensagem ajustada sem caracteres especiais problemáticos
+  const message = `Ola! Gostaria de reservar o número para a Rifa Solidaria:\n\nNumero Escolhido: ${fmt(selectedNumber)}\nNome: ${name}\nContato: ${phone}\n\nChave Pix para pagamento: ${PIX_KEY}\nValor: R$ 10,00\n\nAguardo a confirmacao da minha reserva!`;
 
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${ORGANIZER_WHATSAPP}?text=${encodedMessage}`;
@@ -154,7 +132,6 @@ Aguardo a confirmação da minha reserva!`;
   showMessage(`Redirecionando para o WhatsApp para confirmar o número ${fmt(selectedNumber)}!`, true);
 });
 
-// Copiar Chave Pix
 document.getElementById('copyPixBtn').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(PIX_KEY);
@@ -164,12 +141,11 @@ document.getElementById('copyPixBtn').addEventListener('click', async () => {
   }
 });
 
-// Abrir Painel
 manageNumbersBtn.addEventListener('click', () => {
   const senhaInformada = prompt('Digite a senha de administrador para gerenciar os números:');
   
   if (senhaInformada === ADMIN_PASSWORD) {
-    tempSoldNumbers = [...soldNumbers]; // Clona a lista atual para edição
+    tempSoldNumbers = [...soldNumbers];
     publicView.style.display = 'none';
     managerView.style.display = 'block';
     renderManagerGrid();
@@ -178,12 +154,10 @@ manageNumbersBtn.addEventListener('click', () => {
   }
 });
 
-// Sair do Painel
 closeManagerBtn.addEventListener('click', () => {
   managerView.style.display = 'none';
   publicView.style.display = 'block';
   renderPublicGrid();
 });
 
-// Inicializar
 renderPublicGrid();
