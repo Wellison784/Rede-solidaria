@@ -3,7 +3,8 @@
 // ==========================================
 const ORGANIZER_WHATSAPP = "5547989037974"; 
 const PIX_KEY = "proffnilvia.rg64@gmail.com";
-const ADMIN_PASSWORD = "123"; 
+const ADMIN_PASSWORD = "20012027"; 
+const TICKET_PRICE = 10; // Valor por bilhete em R$
 
 // CONFIGURAÇÃO DO SEU FIREBASE
 const firebaseConfig = {
@@ -26,7 +27,7 @@ const soldNumbersRef = db.ref('soldNumbers');
 // ==========================================
 let soldNumbers = [];
 let tempSoldNumbers = [];
-let selectedNumber = null;
+let selectedNumbers = []; // Agora suporta múltiplos números!
 
 const numberGrid = document.getElementById('numberGrid');
 const managerNumberGrid = document.getElementById('managerNumberGrid');
@@ -59,10 +60,13 @@ closeMessageBtn.addEventListener('click', () => {
   messageBox.style.display = 'none';
 });
 
-// ESCUTAR MUDANÇAS NO FIREBASE EM TEMPO REAL PARA TODOS OS USUÁRIOS
+// ESCUTAR MUDANÇAS NO FIREBASE EM TEMPO REAL
 soldNumbersRef.on('value', (snapshot) => {
   const data = snapshot.val();
   soldNumbers = data ? data : [];
+  
+  // Remove das seleções caso alguém tenha acabado de comprar o número
+  selectedNumbers = selectedNumbers.filter(num => !soldNumbers.includes(num));
   renderPublicGrid();
 });
 
@@ -72,19 +76,27 @@ function renderPublicGrid() {
 
   for (let i = 1; i <= 300; i++) {
     const isSold = soldNumbers.includes(i);
+    const isSelected = selectedNumbers.includes(i);
     if (!isSold) availableCount++;
 
     const btn = document.createElement('button');
-    btn.className = `number ${isSold ? 'taken' : ''} ${selectedNumber === i ? 'chosen' : ''}`;
+    btn.className = `number ${isSold ? 'taken' : ''} ${isSelected ? 'chosen' : ''}`;
     btn.disabled = isSold;
     btn.textContent = fmt(i);
 
     btn.addEventListener('click', () => {
-      selectedNumber = selectedNumber === i ? null : i;
-      formTitle.textContent = selectedNumber 
-        ? `Número ${fmt(selectedNumber)} selecionado` 
-        : 'Finalize sua escolha';
-      submitWhatsappBtn.disabled = !selectedNumber;
+      if (selectedNumbers.includes(i)) {
+        // Se já estava selecionado, desmarca
+        selectedNumbers = selectedNumbers.filter(num => num !== i);
+      } else {
+        // Adiciona à lista de selecionados
+        selectedNumbers.push(i);
+      }
+      
+      // Ordena os números em ordem crescente
+      selectedNumbers.sort((a, b) => a - b);
+      
+      updateFormState();
       renderPublicGrid();
     });
 
@@ -92,6 +104,27 @@ function renderPublicGrid() {
   }
 
   freeCountDisplay.textContent = availableCount;
+}
+
+function updateFormState() {
+  const count = selectedNumbers.length;
+  if (count === 0) {
+    formTitle.textContent = 'Finalize sua escolha';
+    submitWhatsappBtn.textContent = '📱 Enviar Reserva pelo WhatsApp';
+    submitWhatsappBtn.disabled = true;
+  } else {
+    const formattedList = selectedNumbers.map(fmt).join(', ');
+    const totalPrice = count * TICKET_PRICE;
+    
+    if (count === 1) {
+      formTitle.textContent = `Número ${formattedList} selecionado (R$ ${totalPrice},00)`;
+    } else {
+      formTitle.textContent = `${count} números selecionados: ${formattedList} (Total: R$ ${totalPrice},00)`;
+    }
+    
+    submitWhatsappBtn.textContent = `📱 Reservar ${count} ${count === 1 ? 'Número' : 'Números'} (R$ ${totalPrice},00)`;
+    submitWhatsappBtn.disabled = false;
+  }
 }
 
 function renderManagerGrid() {
@@ -131,8 +164,8 @@ saveManagerBtn.addEventListener('click', () => {
 whatsappForm.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  if (!selectedNumber) {
-    showMessage('Por favor, selecione um número disponível primeiro.');
+  if (selectedNumbers.length === 0) {
+    showMessage('Por favor, selecione pelo menos um número disponível.');
     return;
   }
 
@@ -144,13 +177,19 @@ whatsappForm.addEventListener('submit', (e) => {
     return;
   }
 
-  const message = `Ola! Gostaria de reservar o número para a Rifa Solidaria:\n\nNumero Escolhido: ${fmt(selectedNumber)}\nNome: ${name}\nContato: ${phone}\n\nChave Pix para pagamento: ${PIX_KEY}\nValor: R$ 10,00\n\nAguardo a confirmacao da minha reserva!`;
+  const count = selectedNumbers.length;
+  const formattedNumbers = selectedNumbers.map(fmt).join(', ');
+  const totalPrice = count * TICKET_PRICE;
+
+  const numbersLabel = count === 1 ? `Número Escolhido: ${formattedNumbers}` : `Números Escolhidos (${count}): ${formattedNumbers}`;
+
+  const message = `Olá! Gostaria de reservar o(s) número(s) para a Rifa Solidária:\n\n${numbersLabel}\nValor Total: R$ ${totalPrice},00\n\nNome: ${name}\nContato: ${phone}\n\nChave Pix para pagamento: ${PIX_KEY}\n\nAguardo a confirmação da minha reserva!`;
 
   const encodedMessage = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${ORGANIZER_WHATSAPP}?text=${encodedMessage}`;
 
   window.open(whatsappUrl, '_blank');
-  showMessage(`Redirecionando para o WhatsApp para confirmar o número ${fmt(selectedNumber)}!`, true);
+  showMessage(`Redirecionando para o WhatsApp para confirmar a reserva do(s) número(s) ${formattedNumbers}!`, true);
 });
 
 document.getElementById('copyPixBtn').addEventListener('click', async () => {
