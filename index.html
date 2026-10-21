@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rede Solidária · Sistema de Organização</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">♥</div>
+      <div>
+        <div class="brand">Rede Solidária</div>
+        <div class="brand-sub">Sistema de organização e acompanhamento</div>
+      </div>
+      <button class="admin-toggle" id="manageNumbersBtn">⚙️ Painel da Organizadora</button>
+    </header>
+
+    <main>
+      <!-- Visão do Participante (Pública) -->
+      <div id="publicView">
+        <section class="hero">
+          <span class="eyebrow">UMA REDE DE CUIDADO</span>
+          <h1>Pequenos gestos.<br><em>Grande diferença.</em></h1>
+          <p>Escolha um número disponível, preencha seus dados e envie a confirmação direto pelo WhatsApp da organização.</p>
+          
+          <section class="campaign-info">
+            <h2>💚 Uma campanha de solidariedade</h2>
+            <p>Ajude a manter o tratamento de saúde da filha de uma amiga.</p>
+            
+            <div class="campaign-prizes">
+              <h3>🎁 Prêmios da campanha</h3>
+              <ul>
+                <li>1 edredom</li>
+                <li>1 manta</li>
+                <li>1 kit de produtos O Boticário</li>
+              </ul>
+            </div>
+
+            <div class="campaign-details">
+              <div class="campaign-detail">
+                <span>📅 Data prevista do sorteio</span>
+                <strong>20/01/2027</strong>
+              </div>
+              <div class="campaign-detail">
+                <span>💰 Valor informado por número</span>
+                <strong>R$ 10,00</strong>
+              </div>
+            </div>
+
+            <div class="campaign-pix">
+              <span>💠 Chave Pix informada pela organização</span>
+              <strong class="campaign-pix-key">proffnilvia.rg64@gmail.com</strong>
+              <button class="secondary-button" type="button" id="copyPixBtn">Copiar chave Pix</button>
+            </div>
+
+            <p class="campaign-note">As informações acima são fornecidas pela organização. Antes de realizar pagamentos ou divulgar a campanha, confirme as condições do sorteio.</p>
+          </section>
+
+          <div class="hero-stats">
+            <div>
+              <strong>300</strong>
+              <span>números no total</span>
+            </div>
+            <div>
+              <strong id="freeCountDisplay">300</strong>
+              <span>disponíveis agora</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">ESCOLHA UM NÚMERO</span>
+              <h2>Selecione de 001 a 300</h2>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot free"></i> Disponível</span>
+            <span><i class="dot taken"></i> Vendido / Ocupado</span>
+            <span><i class="dot chosen"></i> Sua seleção</span>
+          </div>
+
+          <div class="number-grid" id="numberGrid">
+            <!-- Gerado via JavaScript -->
+          </div>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">SEUS DADOS</span>
+              <h2 id="formTitle">Finalize sua escolha</h2>
+            </div>
+          </div>
+
+          <form id="whatsappForm" class="reserve-form">
+            <label>
+              Seu nome completo
+              <input type="text" id="fullNameInput" placeholder="Como podemos chamar você?" autocomplete="name" required>
+            </label>
+
+            <label>
+              Seu Telefone / WhatsApp
+              <input type="text" id="phoneInput" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" required>
+            </label>
+
+            <button class="primary-button" type="submit" id="submitWhatsappBtn" disabled>📱 Enviar Reserva pelo WhatsApp</button>
+
+            <p class="privacy-note">
+              <span>🔒</span> Ao clicar, será aberta a conversa do WhatsApp com a mensagem pronta contendo seus dados e o número escolhido.
+            </p>
+          </form>
+        </section>
+      </div>
+
+      <!-- Painel de Gerenciamento Protegido por Senha -->
+      <div id="managerView" style="display: none;">
+        <section class="panel admin-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">CONTROLE DE VENDAS (RESTRITO)</span>
+              <h2>Gerenciar Números Vendidos</h2>
+              <p class="muted">Clique nos números para alterar o status. Lembre-se de clicar em "Salvar Alterações" ao terminar.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button class="primary-button" id="saveManagerBtn" style="padding: 10px 16px;">💾 Salvar Alterações</button>
+              <button class="secondary-button" id="closeManagerBtn">Sair do Painel</button>
+            </div>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot free"></i> Disponível (Clique para marcar como vendido)</span>
+            <span><i class="dot taken"></i> Vendido (Clique para liberar)</span>
+          </div>
+
+          <div class="number-grid" id="managerNumberGrid">
+            <!-- Gerado via JavaScript -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Caixa de Notificações -->
+      <div id="messageBox" class="notice" style="display: none;" role="status">
+        <span id="messageText"></span>
+        <button id="closeMessageBtn" aria-label="Fechar mensagem">×</button>
+      </div>
+    </main>
+
+    <footer>
+      Rede Solidária · Organização com cuidado e responsabilidade
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
