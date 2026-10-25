@@ -781,3 +781,7 @@ footer {
   font-weight: 700;
   color: #ffffff;
 }
+.campaign-pix-key {
+  word-break: normal !important;
+  overflow-wrap: break-word;
+}
