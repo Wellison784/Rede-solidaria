@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURAÇÕES DA ORGANIZAÇÃO
 // ==========================================
-const ORGANIZER_WHATSAPP = "5547988725959"; // Seu número configurado
+const ORGANIZER_WHATSAPP = "5547988725959"; // Seu novo número configurado
 const ADMIN_PASSWORD = "20012027"; 
 const TICKET_PRICE = 10; // Valor por bilhete em R$
 
